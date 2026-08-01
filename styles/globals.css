@@ -1,0 +1,24 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* Fonts */
+.font-vazirmatn {
+  font-family: var(--font-vazirmatn);
+}
+
+.font-byekan {
+  font-family: var(--font-byekan);
+}
+
+.font-kalameh {
+  font-family: var(--font-kalameh);
+}
+
+.font-phamelo {
+  font-family: var(--font-phamelo);
+}
+
+.font-geist {
+  font-family: var(--font-geist);
+}
