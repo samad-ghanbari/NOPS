@@ -11,3 +11,28 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum Gender{
+  Male
+  Female
+}
+
+enum Role{
+  Admin
+  User
+}
+
+model User{
+  id BigInt @id @default(autoincrement())
+  name String 
+  lastname String 
+  natid String @unique 
+  gender Gender
+  password String 
+  role Role
+  enabled Boolean @default(true)
+  password_expired Boolean @default(true)
+
+
+  @@map("users")
+}
