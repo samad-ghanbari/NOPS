@@ -7,6 +7,7 @@ import { verifyPassword } from "@/lib/password";
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: {
     strategy: "jwt",
+    maxAge: 60 * 60 * 24 * 7, // 7 days
   },
 
   // Credentials is a function that reeceives configs object and returns provider object
@@ -23,6 +24,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   }
 }
   */
+
+  cookies: {
+    sessionToken: {
+      name: "nops-auth-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
+  },
+
   providers: [
     Credentials({
       credentials: {
