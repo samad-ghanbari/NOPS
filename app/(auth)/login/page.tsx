@@ -9,6 +9,7 @@ export default function LoginPage() {
       items-center
       justify-center
       bg-muted
+      
     "
     >
       <LoginForm />
