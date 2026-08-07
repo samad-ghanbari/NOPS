@@ -17,8 +17,8 @@ export default function Divider({
   onClick = null,
   container_class = " gap-2 my-4",
   label_class = "text-sky-600 text-center font-bold p-2",
-  left_divider_class = "flex-1 border-0 rounded-sm w-full h-1 from-pink-500 to-sky-500 bg-gradient-to-r",
-  right_divider_class = "flex-1 border-0 rounded-sm w-full h-1 from-pink-500 to-sky-500 bg-gradient-to-l",
+  left_divider_class = "flex-1 border-0 rounded-sm w-full h-1 from-gray-500 to-sky-500 bg-gradient-to-r",
+  right_divider_class = "flex-1 border-0 rounded-sm w-full h-1 from-gray-500 to-sky-500 bg-gradient-to-l",
 }: DividerType) {
   return (
     <div
@@ -47,12 +47,12 @@ export default function Divider({
               {label}
             </button>
           ) : (
-            <p
+            <div
               draggable={false}
               className={`inline-block select-none ${label_class}`}
             >
               {label}
-            </p>
+            </div>
           )}
 
           <div className={right_divider_class}></div>

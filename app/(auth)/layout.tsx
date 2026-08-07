@@ -34,16 +34,16 @@ export default async function AuthLayout({
   return (
     <DisableContextMenu>
       <div
-        className={`flex min-h-dvh items-center justify-center bg-linear-to-br from-neutral-100 to-blue-100 select-none ${GeistSans.variable} ${Byekan.variable} ${Vazirmatn.variable} ${Kalameh.variable} ${Phamelo.variable}`}
+        className={`relative flex items-center justify-center bg-linear-to-br from-neutral-100 to-blue-100 select-none ${GeistSans.variable} ${Byekan.variable} ${Vazirmatn.variable} ${Kalameh.variable} ${Phamelo.variable}`}
       >
         <Image
           src={bg}
           alt="Cover"
           fill
-          className="object-cover"
+          className="object-cover z-5"
           draggable={false}
         />
-        <div className="relative z-10">{children}</div>
+        <div className="z-10 font-kalameh">{children}</div>
       </div>
     </DisableContextMenu>
   );

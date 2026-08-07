@@ -7,14 +7,14 @@ import { signIn } from "next-auth/react";
 import { loginSchema, type LoginSchemaType } from "@/lib/validations/login";
 import { useRouter } from "next/navigation";
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import Input from "@/components/Input";
+import CaptchaInput from "../CaptchaInput";
 
 import Image from "next/image";
 import logo from "@/assets/images/logo/logo512.png";
 
 import Divider from "@/components/Divider";
+import { useState } from "react";
 
 export default function LoginForm() {
   const form = useForm<LoginSchemaType>({
@@ -28,6 +28,8 @@ export default function LoginForm() {
 
   const router = useRouter();
 
+  const [authError, setAuthError] = useState<string | null>(null);
+
   const onSubmit = async (data: LoginSchemaType) => {
     const result = await signIn("credentials", {
       natid: data.natid,
@@ -35,15 +37,17 @@ export default function LoginForm() {
       redirect: false,
     });
 
-    router.push("/home");
+    if (result?.error) {
+      setAuthError("کد ملی یا رمزعبور اشتباه می‌باشد.");
+    } else router.push("/home");
   };
 
   const NopsLabel: React.ReactNode = (
-    <p className="text-center font-vazirmatn text-xl text-muted-foreground mb-4 ">
-      <span className="text-sky-600">N</span>etwork{" "}
-      <span className="text-sky-600">OP</span>erations{" "}
-      <span className="text-sky-600">S</span>ystem
-    </p>
+    <div className="text-center font-phamelo text-2xl text-muted-foreground">
+      <span className="text-sky-600 font-bold">N</span>etwork{" "}
+      <span className="text-sky-600 font-bold">OP</span>erations{" "}
+      <span className="text-sky-600 font-bold">S</span>ystem
+    </div>
   );
 
   return (
@@ -59,42 +63,58 @@ export default function LoginForm() {
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-2">
-          <Label>National ID</Label>
-
           <Input
             type="text"
-            placeholder="Enter national ID"
+            label="کد ملی"
+            icon="name"
+            placeholder="کد ملی خود را وارد نمایید"
             {...form.register("natid")}
+            onChange={(e) => {
+              form.register("natid").onChange(e);
+              setAuthError(null);
+            }}
           />
-          {form.formState.errors.natid && (
-            <p className="text-sm text-red-800">
-              {form.formState.errors.natid.message}
-            </p>
-          )}
         </div>
 
         <div className="space-y-2">
-          <Label>Password</Label>
-
           <Input
             type="password"
-            placeholder="Enter Password"
+            icon="password"
+            label="رمز عبور"
+            placeholder="رمز عبور خود را وارد نمایید"
             {...form.register("password")}
+            onChange={(e) => {
+              form.register("password").onChange(e);
+              setAuthError(null);
+            }}
           />
-          {form.formState.errors.password && (
-            <p className="text-sm text-red-800">
-              {form.formState.errors.password.message}
-            </p>
-          )}
         </div>
+        <CaptchaInput />
+        {/* errors */}
+        {form.formState.errors.natid && (
+          <p className="text-sm text-pink-700" dir="rtl">
+            {form.formState.errors.natid.message}
+          </p>
+        )}
+        {form.formState.errors.password && (
+          <p className="text-sm text-pink-700" dir="rtl">
+            {form.formState.errors.password.message}
+          </p>
+        )}
 
-        <Button
-          className="w-full bg-sky-400 border-blue-400 hover:bg-sky-600 mt-12"
+        {authError && (
+          <p className="text-sm text-pink-700" dir="rtl">
+            {authError}
+          </p>
+        )}
+
+        <button
+          className="w-full text-lg text-gray-700 hover:text-neutral-50 border border-gray-500 bg-sky-400 h-12  hover:bg-sky-600 mt-4"
           type="submit"
           disabled={form.formState.isSubmitting}
         >
-          {form.formState.isSubmitting ? "Logging in..." : "Login"}
-        </Button>
+          {form.formState.isSubmitting ? "در حال ورود..." : "ورود به سامانه"}
+        </button>
       </form>
     </div>
   );

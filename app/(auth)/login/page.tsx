@@ -8,8 +8,7 @@ export default function LoginPage() {
       flex
       items-center
       justify-center
-      bg-muted
-      
+      p-10
     "
     >
       <LoginForm />
