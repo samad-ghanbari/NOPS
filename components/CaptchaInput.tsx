@@ -9,7 +9,7 @@ type Captcha = {
 };
 
 export default function CaptchaInput() {
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<string | undefined>(undefined);
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function CaptchaInput() {
     const json: Captcha = await res.json();
 
     setImage(json.image);
-    setToken(token);
+    setToken(json.token);
   }
   return (
     <div className="flex items-center p-0 bg-transparent ">
@@ -29,7 +29,7 @@ export default function CaptchaInput() {
         className="bg-trasparent h-12 w-10 cursor-pointer border-none p-2"
         onClick={refreshCaptcha}
       >
-        <RefreshCw className="w-full h-full text-sky-400 hover:text-sky-600 transition-transform duration-300 hover:rotate-180" />
+        <RefreshCw className="w-full h-full text-sky-400 hover:text-sky-600 " />
       </button>
       <button
         className="bg-trasparent m-0.5 h-12 w-35 cursor-pointer border-none"
@@ -53,6 +53,7 @@ export default function CaptchaInput() {
           className="w-full input_class text-center"
           placeholder="کد امنیتی"
           data-token={token}
+          autoComplete="off"
           required
         />
       </div>
