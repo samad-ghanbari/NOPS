@@ -22,3 +22,9 @@
 .font-geist {
   font-family: var(--font-geist);
 }
+
+@layer components {
+  .input_class {
+    @apply rounded-lg border border-gray-300  bg-gray-50  px-2.5  py-2.5 text-sm disabled:cursor-not-allowed disabled:opacity-80  ltr:pl-10  rtl:pr-10 rtl:text-right placeholder:text-right;
+  }
+}

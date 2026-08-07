@@ -60,7 +60,7 @@ export default function Input({
   const Icon = iconMap[icon];
 
   return (
-    <div className="mb-6" dir={dir}>
+    <div className="mb-6 bg-transparent" dir={dir}>
       <label
         htmlFor={name}
         className="mb-2 block text-right text-sm text-gray-500"
@@ -68,9 +68,9 @@ export default function Input({
         {label}
       </label>
 
-      <div className="relative w-full rounded-lg">
-        <div className="pointer-events-none absolute inset-y-0 inset-s-0 flex p-2 text-gray-500">
-          <Icon className="h-5 w-5" />
+      <div className="relative w-full h-12 bg-transparent p-0 m-0">
+        <div className="pointer-events-none absolute inset-s-0 h-12 w-12 p-4 text-gray-500">
+          <Icon className="h-full w-full" />
         </div>
         <input
           id={name}
@@ -81,10 +81,7 @@ export default function Input({
           placeholder={placeholder}
           disabled={disabled}
           required={required}
-          className={cn(
-            "block w-full rounded-lg border border-gray-300 bg-gray-50 px-2.5 py-2.5 text-sm disabled:cursor-not-allowed disabled:opacity-80 ltr:pl-10 rtl:pr-10 rtl:text-right",
-            inputClass,
-          )}
+          className={cn("block w-full h-12 input_class", inputClass)}
           {...rest}
         />
       </div>

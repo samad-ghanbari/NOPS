@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import refresh from "@/assets/images/refresh.png";
+import { ShieldCheck, RefreshCw } from "lucide-react";
 
 type Captcha = {
   image: string;
@@ -9,8 +9,8 @@ type Captcha = {
 };
 
 export default function CaptchaInput() {
-  const [image, setImage] = useState("");
-  const [token, setToken] = useState("");
+  const [image, setImage] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
     refreshCaptcha();
@@ -24,17 +24,12 @@ export default function CaptchaInput() {
     setToken(token);
   }
   return (
-    <div className="flex items-center p-0">
+    <div className="flex items-center p-0 bg-transparent ">
       <button
-        className="bg-trasparent h-12 w-10 cursor-pointer border-none"
+        className="bg-trasparent h-12 w-10 cursor-pointer border-none p-2"
         onClick={refreshCaptcha}
       >
-        <img
-          id="captchaImage"
-          src={refresh.src}
-          alt="کد امنیتی"
-          className=" h-12 w-10"
-        />
+        <RefreshCw className="w-full h-full text-sky-400 hover:text-sky-600 transition-transform duration-300 hover:rotate-180" />
       </button>
       <button
         className="bg-trasparent m-0.5 h-12 w-35 cursor-pointer border-none"
@@ -47,14 +42,20 @@ export default function CaptchaInput() {
           className="h-12 w-35"
         />
       </button>
-      <input
-        type="text"
-        name="captcha"
-        className="h-12 w-25 rounded border border-blue-200 text-blue-900 placeholder:text-right focus:ring-2 focus:ring-blue-400 focus:outline-none"
-        placeholder="کد امنیتی"
-        data-token={token}
-        required
-      />
+
+      <div className="relative flex-1 h-12 bg-transparent p-0 m-0" dir="rtl">
+        <div className="pointer-events-none absolute inset-s-0 h-12 w-12 p-4 text-gray-500">
+          <ShieldCheck className="h-full w-full" />
+        </div>
+        <input
+          type="text"
+          name="captcha"
+          className="w-full input_class text-center"
+          placeholder="کد امنیتی"
+          data-token={token}
+          required
+        />
+      </div>
     </div>
   );
 }
