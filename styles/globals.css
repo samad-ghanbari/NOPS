@@ -27,4 +27,8 @@
   .input_class {
     @apply rounded-lg border border-gray-300  bg-gray-50  px-2.5  py-2.5 text-sm disabled:cursor-not-allowed disabled:opacity-80  ltr:pl-10  rtl:pr-10 rtl:text-right placeholder:text-right;
   }
+
+  .btn_class {
+    @apply text-gray-700 hover:text-neutral-50 border rounded-lg border-gray-500 bg-sky-500 h-12  hover:bg-sky-600 mt-4;
+  }
 }

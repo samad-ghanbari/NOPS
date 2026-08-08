@@ -1,39 +1,56 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useImperativeHandle, useState } from "react";
 import { ShieldCheck, RefreshCw } from "lucide-react";
+import { UseFormRegisterReturn } from "react-hook-form";
 
 type Captcha = {
   image: string;
   token: string;
 };
 
-export default function CaptchaInput() {
+type InputProps = {
+  token: string | null;
+  setToken: React.Dispatch<React.SetStateAction<string | null>>;
+  captcha_register: UseFormRegisterReturn<"captcha">;
+  refreshRef: React.Ref<(set_focus: boolean) => void>;
+};
+
+export default function CaptchaInput({
+  token,
+  setToken,
+  captcha_register,
+  refreshRef,
+}: InputProps) {
   const [image, setImage] = useState<string | undefined>(undefined);
-  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    refreshCaptcha();
+    refreshCaptcha(false);
   }, []);
 
-  async function refreshCaptcha() {
+  useImperativeHandle(refreshRef, () => refreshCaptcha);
+
+  async function refreshCaptcha(set_focus: boolean = true) {
     const res: Response = await fetch("/api/captcha");
     const json: Captcha = await res.json();
+
+    if (set_focus) captcha_register.ref;
 
     setImage(json.image);
     setToken(json.token);
   }
+
   return (
     <div className="flex items-center p-0 bg-transparent ">
       <button
         className="bg-trasparent h-12 w-10 cursor-pointer border-none p-2"
-        onClick={refreshCaptcha}
+        onClick={() => refreshCaptcha()}
       >
         <RefreshCw className="w-full h-full text-sky-400 hover:text-sky-600 " />
       </button>
       <button
         className="bg-trasparent m-0.5 h-12 w-35 cursor-pointer border-none"
-        onClick={refreshCaptcha}
+        onClick={() => refreshCaptcha()}
       >
         <img
           id="captchaImage"
@@ -49,11 +66,11 @@ export default function CaptchaInput() {
         </div>
         <input
           type="text"
-          name="captcha"
           className="w-full input_class text-center"
           placeholder="کد امنیتی"
           data-token={token}
           autoComplete="off"
+          {...captcha_register}
           required
         />
       </div>

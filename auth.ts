@@ -1,8 +1,18 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import { CredentialsSignin } from "next-auth";
+
+import { verifyCaptcha } from "./lib/captcha";
 
 import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "@/lib/password";
+
+class CaptchaInvalidError extends CredentialsSignin {
+  code = "CAPTCHA_INVALID";
+}
+class CredInvalidError extends CredentialsSignin {
+  code = "CRED_INVALID";
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: {
@@ -42,11 +52,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       credentials: {
         natid: {}, // empty config
         password: {},
+        captcha: {},
+        captchaToken: {},
       },
 
       async authorize(credentials) {
         const natid = credentials.natid as string;
         const password = credentials.password as string;
+        const captcha = credentials.captcha as string;
+        const captchaToken = credentials.captchaToken as string;
+
+        const CapVerify: boolean = await verifyCaptcha(captcha, captchaToken);
+
+        if (!CapVerify) {
+          throw new CaptchaInvalidError();
+        }
 
         const user = await prisma.user.findUnique({
           where: {
@@ -55,13 +75,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         });
 
         if (!user) {
-          return null;
+          throw new CredInvalidError();
         }
 
         const validPassword = await verifyPassword(password, user.password);
 
         if (!validPassword) {
-          return null;
+          throw new CredInvalidError();
         }
 
         return {

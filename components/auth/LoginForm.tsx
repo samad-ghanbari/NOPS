@@ -4,7 +4,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 
-import { loginSchema, type LoginSchemaType } from "@/lib/validations/login";
+import {
+  loginSchema,
+  type LoginSchemaType,
+} from "@/lib/validations/auth_login";
 import { useRouter } from "next/navigation";
 
 import Input from "@/components/Input";
@@ -14,7 +17,7 @@ import Image from "next/image";
 import logo from "@/assets/images/logo/logo512.png";
 
 import Divider from "@/components/Divider";
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export default function LoginForm() {
   const form = useForm<LoginSchemaType>({
@@ -23,22 +26,42 @@ export default function LoginForm() {
     defaultValues: {
       natid: "",
       password: "",
+      captcha: "",
     },
   });
+  const natidField = form.register("natid");
+  const passwordField = form.register("password");
+  const captchaField = form.register("captcha");
+
+  const refreshRef = useRef<(set_focus: boolean) => Promise<void>>(null);
 
   const router = useRouter();
 
   const [authError, setAuthError] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    form.setFocus("natid");
+  }, []);
 
   const onSubmit = async (data: LoginSchemaType) => {
     const result = await signIn("credentials", {
       natid: data.natid,
       password: data.password,
+      captcha: data.captcha,
+      captchaToken: captchaToken,
       redirect: false,
     });
 
+    console.log("result:", result);
+    setAuthError("");
+
     if (result?.error) {
-      setAuthError("کد ملی یا رمزعبور اشتباه می‌باشد.");
+      if (result.code === "CAPTCHA_INVALID") {
+        setAuthError("عبارت امنیتی صحیح نمی‌باشد.");
+        refreshRef?.current?.(true);
+      } else if (result.code === "CRED_INVALID")
+        setAuthError("کد ملی یا رمز عبور صحیح نمی‌باشد.");
     } else router.push("/home");
   };
 
@@ -68,9 +91,9 @@ export default function LoginForm() {
             label="کد ملی"
             icon="name"
             placeholder="کد ملی خود را وارد نمایید"
-            {...form.register("natid")}
+            {...natidField}
             onChange={(e) => {
-              form.register("natid").onChange(e);
+              natidField.onChange(e);
               setAuthError(null);
             }}
           />
@@ -82,14 +105,21 @@ export default function LoginForm() {
             icon="password"
             label="رمز عبور"
             placeholder="رمز عبور خود را وارد نمایید"
-            {...form.register("password")}
+            {...passwordField}
             onChange={(e) => {
-              form.register("password").onChange(e);
+              passwordField.onChange(e);
               setAuthError(null);
             }}
           />
         </div>
-        <CaptchaInput />
+
+        <CaptchaInput
+          token={captchaToken}
+          setToken={setCaptchaToken}
+          captcha_register={captchaField}
+          refreshRef={refreshRef}
+        />
+
         {/* errors */}
         {form.formState.errors.natid && (
           <p className="text-sm text-pink-700" dir="rtl">
@@ -109,7 +139,7 @@ export default function LoginForm() {
         )}
 
         <button
-          className="w-full text-lg text-gray-700 hover:text-neutral-50 border border-gray-500 bg-sky-400 h-12  hover:bg-sky-600 mt-4"
+          className="w-full text-lg btn_class"
           type="submit"
           disabled={form.formState.isSubmitting}
         >

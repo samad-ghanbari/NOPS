@@ -5,5 +5,6 @@ export default function DisableContextMenu({
 }: {
   children: React.ReactNode;
 }) {
-  return <div onContextMenu={(e) => e.preventDefault()}>{children}</div>;
+  return <div>{children}</div>;
+  // onContextMenu={(e) => e.preventDefault()}
 }
