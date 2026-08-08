@@ -13,6 +13,9 @@ class CaptchaInvalidError extends CredentialsSignin {
 class CredInvalidError extends CredentialsSignin {
   code = "CRED_INVALID";
 }
+class DatabaseError extends CredentialsSignin {
+  code = "DB_INVALID";
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: {
@@ -66,6 +69,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!CapVerify) {
           throw new CaptchaInvalidError();
+        }
+
+        try {
+          //check db connected
+          await prisma.$queryRaw`SELECT 1`;
+        } catch (e) {
+          throw new DatabaseError();
         }
 
         const user = await prisma.user.findUnique({

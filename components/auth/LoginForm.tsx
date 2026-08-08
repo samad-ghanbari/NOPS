@@ -4,10 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 
-import {
-  loginSchema,
-  type LoginSchemaType,
-} from "@/lib/validations/auth_login";
+import { loginSchema, type LoginSchemaType } from "@/lib/validations/zod_login";
 import { useRouter } from "next/navigation";
 
 import Input from "@/components/Input";
@@ -60,7 +57,10 @@ export default function LoginForm() {
       if (result.code === "CAPTCHA_INVALID") {
         setAuthError("عبارت امنیتی صحیح نمی‌باشد.");
         refreshRef?.current?.(true);
-      } else if (result.code === "CRED_INVALID")
+        form.setValue("captcha", "");
+      } else if (result.code === "DB_INVALID")
+        setAuthError("ارتباط با پایگاه داده قطع شده است.");
+      else if (result.code === "CRED_INVALID")
         setAuthError("کد ملی یا رمز عبور صحیح نمی‌باشد.");
     } else router.push("/home");
   };
