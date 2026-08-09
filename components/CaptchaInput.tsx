@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useImperativeHandle, useState } from "react";
+import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
 import { ShieldCheck, RefreshCw } from "lucide-react";
 import { UseFormRegisterReturn } from "react-hook-form";
 
@@ -29,12 +29,13 @@ export default function CaptchaInput({
   }, []);
 
   useImperativeHandle(refreshRef, () => refreshCaptcha);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   async function refreshCaptcha(set_focus: boolean = true) {
     const res: Response = await fetch("/api/captcha");
     const json: Captcha = await res.json();
 
-    if (set_focus) captcha_register.ref;
+    if (set_focus) inputRef.current?.focus();
 
     setImage(json.image);
     setToken(json.token);
@@ -71,6 +72,10 @@ export default function CaptchaInput({
           data-token={token}
           autoComplete="off"
           {...captcha_register}
+          ref={(element) => {
+            captcha_register.ref(element);
+            inputRef.current = element;
+          }}
           required
         />
       </div>

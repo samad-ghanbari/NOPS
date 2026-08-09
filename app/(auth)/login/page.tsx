@@ -1,17 +1,15 @@
 import LoginForm from "@/components/auth/LoginForm";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "NOPS | Login",
+  description: "Network Operations System",
+};
 
 export default function LoginPage() {
   return (
-    <main
-      className="
-      min-h-screen
-      flex
-      items-center
-      justify-center
-      p-10
-    "
-    >
+    <div className="flex flex-col min-h-dvh items-center justify-center p-4">
       <LoginForm />
-    </main>
+    </div>
   );
 }

@@ -50,7 +50,6 @@ export default function LoginForm() {
       redirect: false,
     });
 
-    console.log("result:", result);
     setAuthError("");
 
     if (result?.error) {
@@ -60,8 +59,10 @@ export default function LoginForm() {
         form.setValue("captcha", "");
       } else if (result.code === "DB_INVALID")
         setAuthError("ارتباط با پایگاه داده قطع شده است.");
-      else if (result.code === "CRED_INVALID")
+      else if (result.code === "CRED_INVALID") {
         setAuthError("کد ملی یا رمز عبور صحیح نمی‌باشد.");
+        form.setFocus("natid");
+      }
     } else router.push("/home");
   };
 
@@ -74,16 +75,14 @@ export default function LoginForm() {
   );
 
   return (
-    <div className="w-95 bg-neutral-50/30 p-2 border border-gray-300 rounded-xl">
+    <div className="w-96 bg-neutral-100/30 p-2 border border-gray-400 rounded-xl">
       <Image
         src={logo}
         alt="NOPS Logo"
-        className="h-48 w-48 mx-auto"
+        className="h-24 w-24 mx-auto"
         draggable={false}
       />
-
       <Divider label={NopsLabel} label_class="text-gray-600 text-center p-2" />
-
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-2">
           <Input

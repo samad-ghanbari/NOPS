@@ -65,17 +65,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const captcha = credentials.captcha as string;
         const captchaToken = credentials.captchaToken as string;
 
-        const CapVerify: boolean = await verifyCaptcha(captcha, captchaToken);
-
-        if (!CapVerify) {
-          throw new CaptchaInvalidError();
-        }
-
         try {
           //check db connected
           await prisma.$queryRaw`SELECT 1`;
         } catch (e) {
           throw new DatabaseError();
+        }
+
+        const CapVerify: boolean = await verifyCaptcha(captcha, captchaToken);
+
+        if (!CapVerify) {
+          throw new CaptchaInvalidError();
         }
 
         const user = await prisma.user.findUnique({

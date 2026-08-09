@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import {
   GeistSans,
   Vazirmatn,
@@ -7,11 +6,7 @@ import {
   Byekan,
 } from "@/assets/fonts/fonts";
 import "@/styles/globals.css";
-
-export const metadata: Metadata = {
-  title: "NOPS | Login",
-  description: "Network Operations System",
-};
+import DisableContextMenu from "@/components/DisableContextMenu";
 
 export default function RootLayout({
   children,
@@ -19,12 +14,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${GeistSans.variable} ${Byekan.variable} ${Vazirmatn.variable} ${Kalameh.variable} ${Phamelo.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col font-vazirmatn">
-        {children}
+    <html lang="en">
+      <body
+        className={`${GeistSans.variable} ${Byekan.variable} ${Vazirmatn.variable} ${Kalameh.variable} ${Phamelo.variable} p-0 m-0 min-h-full select-none w-full font-kalameh`}
+      >
+        <DisableContextMenu>{children}</DisableContextMenu>
       </body>
     </html>
   );
