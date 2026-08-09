@@ -16,6 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
+        dir="rtl"
         className={`${GeistSans.variable} ${Byekan.variable} ${Vazirmatn.variable} ${Kalameh.variable} ${Phamelo.variable} p-0 m-0 min-h-full select-none w-full font-kalameh`}
       >
         <DisableContextMenu>{children}</DisableContextMenu>
