@@ -7,6 +7,7 @@ import {
 } from "@/assets/fonts/fonts";
 import "@/styles/globals.css";
 import DisableContextMenu from "@/components/DisableContextMenu";
+import { Toaster } from "sonner";
 
 export default function RootLayout({
   children,
@@ -19,7 +20,10 @@ export default function RootLayout({
         dir="rtl"
         className={`${GeistSans.variable} ${Byekan.variable} ${Vazirmatn.variable} ${Kalameh.variable} ${Phamelo.variable} p-0 m-0 min-h-full select-none w-full font-kalameh`}
       >
-        <DisableContextMenu>{children}</DisableContextMenu>
+        <DisableContextMenu>
+          <Toaster position="top-right" dir="rtl" />
+          {children}
+        </DisableContextMenu>
       </body>
     </html>
   );
