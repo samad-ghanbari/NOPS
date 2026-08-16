@@ -94,11 +94,34 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           throw new CredInvalidError();
         }
 
+        // as User in types/next-auth.d.ts
         return {
+          // returns user for token payload
           id: user.id,
           natid: user.natid,
+          name: `${user.name} ${user.lastname}`,
         };
       },
     }),
   ],
+
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.natid = user.natid;
+        token.name = user.name;
+      }
+
+      return token;
+    },
+
+    async session({ session, token }) {
+      session.user.id = token.id as string;
+      session.user.natid = token.natid as string;
+      session.user.name = token.name as string;
+
+      return session;
+    },
+  },
 });

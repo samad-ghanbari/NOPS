@@ -10,8 +10,8 @@ export default async function DashboardLayout({
   const session = await auth();
 
   if (!session) {
-    redirect("/login");
+    redirect("/signin");
   }
 
-  return <Base>{children}</Base>;
+  return <Base user={session?.user.name || null}>{children}</Base>;
 }

@@ -1,15 +1,15 @@
-import LoginForm from "@/components/auth/LoginForm";
+import SigninForm from "@/components/auth/SigninForm";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "NOPS | Login",
+  title: "NOPS | Sign-in",
   description: "Network Operations System",
 };
 
-export default function LoginPage() {
+export default function SigninPage() {
   return (
     <div className="flex flex-col min-h-dvh items-center justify-center p-4">
-      <LoginForm />
+      <SigninForm />
     </div>
   );
 }
