@@ -3,6 +3,7 @@
 @import "shadcn/tailwind.css";
 @source "../app";
 @source "../components";
+@source "../lib";
 
 /* Fonts */
 .font-vazirmatn {
