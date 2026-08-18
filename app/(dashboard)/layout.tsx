@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import Base from "@/components/dashboard/Base";
+import Base from "@/components/layout/Base";
 import { redirect } from "next/navigation";
 
 export default async function DashboardLayout({
