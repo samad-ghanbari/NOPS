@@ -1,14 +1,17 @@
-import BreadCrumb from "@/components/BreadCrumb";
+"use server";
+
 import { prisma } from "@/lib/prisma";
+import Dashboard from "@/components/dashboard/Dashboard";
+import type { Province } from "@/lib/generated/prisma/client"; // it is using prisma client which should be used on the server
 
 export default async function DashboardPage() {
-  const provinces = await prisma.province.findMany({
-    orderBy: { order: "asc" },
+  const provinces: Province[] = await prisma.province.findMany({
+    orderBy: [{ order: "asc" }, { provinceName: "asc" }],
   });
 
   return (
     <>
-      <BreadCrumb items={[]} />
+      <Dashboard provinces={provinces} />
     </>
   );
 }
