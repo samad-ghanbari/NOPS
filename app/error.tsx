@@ -1,0 +1,50 @@
+"use client";
+
+import logo from "@/assets/images/logo/logo128.png";
+import stop from "@/assets/images/stop.png";
+import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { errorMessages } from "@/lib/constants/error";
+
+export default function GlobalError({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    setLoaded(true);
+  }, []);
+
+  const message = errorMessages[error.message] ?? error.message;
+
+  return (
+    <div className="relative w-full h-dvh bg-pink-200 flex flex-col gap-4 items-center justify-center">
+      <Image
+        src={logo}
+        alt=""
+        className="fixed top-0 left-0 object-fill opacity-5 h-full w-full"
+      />
+      <Image src={stop} alt="NOPS" className="z-0 w-32 h-32" />
+      <p
+        className={cn(
+          "text-pink-700 font-bold  transition-all duration-1000",
+          loaded ? "text-3xl" : "text-8xl",
+        )}
+      >
+        {message}
+      </p>
+
+      <button
+        className="z-10 flex flex-row items-center justify-center rounded bg-pink-700 px-8 py-2 text-white hover:bg-pink-800 my-8"
+        onClick={() => reset()}
+      >
+        لطفا بعدا تلاش نمایید.
+      </button>
+    </div>
+  );
+}
