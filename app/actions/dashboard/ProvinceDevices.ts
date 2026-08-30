@@ -4,7 +4,6 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { ERROR_CODES } from "@/lib/constants/error";
-import { Device } from "@/lib/generated/prisma/client";
 
 const schema = z.object({ provinceId: z.uuidv7() });
 
@@ -20,11 +19,17 @@ async function validate(provinceId: string) {
   if (!result.success) throw new Error(ERROR_CODES.VALIDATION_ERROR);
 }
 
-export async function getDevices(provinceId: string) {
+export async function getDevices(
+  provinceId: string,
+  groupId: string | null = null,
+) {
   validate(provinceId);
 
   const devices = await prisma.device.findMany({
-    where: { provinceId: provinceId },
+    where: {
+      provinceId,
+      ...(groupId !== null && { groups: { some: { groupId } } }),
+    },
     include: {
       role: true,
       province: true,
@@ -34,4 +39,19 @@ export async function getDevices(provinceId: string) {
   });
 
   return devices;
+}
+
+export async function getDeviceCount(
+  provinceId: string,
+  groupId: string | null = null,
+) {
+  validate(provinceId);
+
+  const cnt: number = await prisma.device.count({
+    where: {
+      provinceId,
+      ...(groupId !== null && { groups: { some: { groupId } } }),
+    },
+  });
+  return cnt;
 }
