@@ -22,6 +22,8 @@ async function validate(provinceId: string) {
 export async function getDevices(
   provinceId: string,
   groupId: string | null = null,
+  page: number = 1,
+  pageSize: number = 2,
 ) {
   validate(provinceId);
 
@@ -35,10 +37,20 @@ export async function getDevices(
       province: true,
       groups: { include: { group: true } },
     },
+    take: pageSize,
+    skip: (page - 1) * pageSize,
     orderBy: [{ role: { role: "asc" } }, { deviceName: "asc" }],
   });
 
-  return devices;
+  const total: number = await getDeviceCount(provinceId, groupId);
+
+  return {
+    devices,
+    total,
+    page,
+    pageSize,
+    totalPage: Math.ceil(total / pageSize),
+  };
 }
 
 export async function getDeviceCount(
