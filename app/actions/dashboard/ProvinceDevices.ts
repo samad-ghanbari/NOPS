@@ -23,7 +23,7 @@ export async function getDevices(
   provinceId: string,
   groupId: string | null = null,
   page: number = 1,
-  pageSize: number = 2,
+  pageSize: number = 20,
 ) {
   validate(provinceId);
 
