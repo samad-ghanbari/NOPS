@@ -1,3 +1,3 @@
 export default function province() {
-  return <div> province</div>;
+  return <div> groups</div>;
 }
