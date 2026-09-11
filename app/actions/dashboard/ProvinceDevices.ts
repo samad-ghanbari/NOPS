@@ -25,7 +25,7 @@ export async function getDevices(
   page: number = 1,
   pageSize: number = 20,
 ) {
-  validate(provinceId);
+  await validate(provinceId);
 
   const devices = await prisma.device.findMany({
     where: {

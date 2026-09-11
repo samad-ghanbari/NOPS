@@ -33,7 +33,7 @@ export async function getGroupCount(provinceId: string) {
 //
 
 export async function getGroups(provinceId: string) {
-  validate(provinceId);
+  await validate(provinceId);
   const groups: Group[] = await prisma.group.findMany({
     where: { provinceId: provinceId },
     orderBy: [{ order: "asc" }, { groupName: "asc" }],
