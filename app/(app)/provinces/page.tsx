@@ -12,21 +12,25 @@ import { fetchProvince } from "@/app/actions/provinces/fetchData";
 
 export default function Provinces() {
   const [records, setRecords] = useState<Province[]>([]);
-  const [openAddModal, setOpenAddModal] = useState(false);
+
+  const [selectedProvince, selectProvince] = useState<Province | null>(null);
+  const [modal, setModal] = useState<"add" | "update" | "delete" | null>(null);
+
   useEffect(() => {
     fetchRrecords();
   }, []);
-
-  function openAddDialog() {
-    setOpenAddModal(true);
-  }
 
   async function fetchRrecords() {
     setRecords(await fetchProvince());
   }
 
-  async function updatePrrovince(data: Province) {}
-  async function deleteProvince(id: string) {}
+  // open CRUD Modals
+  function openUpdateModal(data: Province) {
+    setModal("update");
+  }
+  function openDeleteModal(data: Province) {
+    setModal("delete");
+  }
 
   return (
     <>
@@ -36,26 +40,19 @@ export default function Provinces() {
       <button
         title="ایجاد منطقه جدید"
         className="cursor-pointer block mr-auto my-4"
-        onClick={openAddDialog}
+        onClick={() => {
+          setModal("add");
+        }}
       >
         <Plus className="w-8 h-8 rounded p-1 font-bold text-sky-800 bg-gray-200 hover:text-sky-100 hover:bg-sky-700 text-xl" />
       </button>
       <div className=" flex flex-row flex-wrap justify-center items-stretch gap-2 m-8">
         {records.map((rec) => (
-          <ProvinceWidget
-            key={rec.id}
-            data={rec}
-            onDelete={deleteProvince}
-            onUpdate={updatePrrovince}
-          />
+          <ProvinceWidget key={rec.id} data={rec} onDelete={} onUpdate={} />
         ))}
       </div>
 
-      <AddProvince
-        openModal={openAddModal}
-        setOpenModal={setOpenAddModal}
-        onAdd={fetchRrecords}
-      />
+      <AddProvince openModal={} setOpenModal={} onAdd={fetchRrecords} />
     </>
   );
 }
