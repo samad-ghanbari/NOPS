@@ -20,7 +20,7 @@ async function validate(data: ProvinceSchemaType) {
   }
 }
 
-export async function addprovince(data: ProvinceSchemaType) {
+export async function createProvince(data: ProvinceSchemaType) {
   await validate(data);
 
   try {
