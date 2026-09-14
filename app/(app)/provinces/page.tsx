@@ -63,7 +63,12 @@ export default function Provinces() {
 
       <CreateProvince setModal={setModal} modal={modal} onAdd={fetchRrecords} />
       <UpdateProvince setModal={setModal} modal={modal} onAdd={fetchRrecords} />
-      <DeleteProvince setModal={setModal} modal={modal} onAdd={fetchRrecords} />
+      <DeleteProvince
+        setModal={setModal}
+        modal={modal}
+        onDelete={fetchRrecords}
+        data={selectedProvince}
+      />
     </>
   );
 }
