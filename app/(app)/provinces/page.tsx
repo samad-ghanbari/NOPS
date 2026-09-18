@@ -28,14 +28,6 @@ export default function Provinces() {
     setRecords(await fetchProvince());
   }
 
-  // open CRUD Modals
-  function updateProvince(data: Province) {
-    setModal("update");
-  }
-  function deleteProvince(data: Province) {
-    setModal("delete");
-  }
-
   return (
     <>
       <BreadCrumb items={[{ name: "گروه‌بندی/منطقه" }]} />
@@ -62,7 +54,12 @@ export default function Provinces() {
       </div>
 
       <CreateProvince setModal={setModal} modal={modal} onAdd={fetchRrecords} />
-      <UpdateProvince setModal={setModal} modal={modal} onAdd={fetchRrecords} />
+      <UpdateProvince
+        setModal={setModal}
+        modal={modal}
+        onUpdate={fetchRrecords}
+        data={selectedProvince}
+      />
       <DeleteProvince
         setModal={setModal}
         modal={modal}
