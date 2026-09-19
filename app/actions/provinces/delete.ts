@@ -2,17 +2,24 @@
 
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { ERROR_CODES } from "@/lib/constants/error";
+import { ERROR_CODES, ERROR_MESSAGE } from "@/lib/constants/error";
+import { ResultType } from "@/lib/types/Result";
 
-export async function deleteProvince(id: string) {
+export async function deleteProvince(id: string): Promise<ResultType> {
   const session = await auth();
 
   if (!session?.user) {
-    throw new Error(ERROR_CODES.UNAUTHENTICATED);
+    return {
+      success: false,
+      message: ERROR_MESSAGE[ERROR_CODES.UNAUTHENTICATED],
+    };
   }
 
   if (!id) {
-    throw new Error(ERROR_CODES.VALIDATION_ERROR);
+    return {
+      success: false,
+      message: ERROR_MESSAGE[ERROR_CODES.VALIDATION_ERROR],
+    };
   }
 
   try {
@@ -20,8 +27,14 @@ export async function deleteProvince(id: string) {
       where: { id },
     });
 
-    return true;
+    return {
+      success: true,
+      message: null,
+    };
   } catch (error) {
-    throw new Error(ERROR_CODES.DATABASE_ERROR);
+    return {
+      success: false,
+      message: ERROR_MESSAGE[ERROR_CODES.DATABASE_ERROR],
+    };
   }
 }

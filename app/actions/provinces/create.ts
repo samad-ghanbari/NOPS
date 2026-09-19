@@ -2,26 +2,42 @@
 
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { ERROR_CODES } from "@/lib/constants/error";
+import { ERROR_CODES, ERROR_MESSAGE } from "@/lib/constants/error";
 import {
   ProvinceSchema,
   type ProvinceSchemaType,
 } from "@/lib/validations/zod_province";
+import { ResultType } from "@/lib/types/Result";
+import { Prisma } from "@/lib/generated/prisma/client";
 
-async function validate(data: ProvinceSchemaType) {
+async function validate(data: ProvinceSchemaType): Promise<ResultType> {
   const session = await auth();
 
-  if (!session?.user) throw new Error(ERROR_CODES.UNAUTHENTICATED);
+  if (!session?.user) {
+    return {
+      success: false,
+      message: ERROR_MESSAGE[ERROR_CODES.UNAUTHENTICATED],
+    };
+  }
 
   const validated = ProvinceSchema.safeParse(data);
 
   if (!validated.success) {
-    throw new Error(ERROR_CODES.VALIDATION_ERROR);
+    return {
+      success: false,
+      message: ERROR_MESSAGE[ERROR_CODES.VALIDATION_ERROR],
+    };
   }
+
+  return {
+    success: true,
+    message: null,
+  };
 }
 
 export async function createProvince(data: ProvinceSchemaType) {
-  await validate(data);
+  const validated_data = await validate(data);
+  if (!validated_data.success) return validated_data;
 
   try {
     if (data.autoOrder) {
@@ -35,8 +51,23 @@ export async function createProvince(data: ProvinceSchemaType) {
       data: { provinceName: data.provinceName, order: data.provinceOrder },
     });
 
-    return true;
+    return {
+      success: true,
+      message: null,
+    };
   } catch (error) {
-    throw new Error(ERROR_CODES.DATABASE_ERROR);
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        return {
+          success: false,
+          message: "نام منطقه قبلاً ثبت شده است.",
+        };
+      }
+    }
+
+    return {
+      success: false,
+      message: ERROR_MESSAGE[ERROR_CODES.DATABASE_ERROR],
+    };
   }
 }

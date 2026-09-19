@@ -2,41 +2,62 @@
 
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { ERROR_CODES } from "@/lib/constants/error";
+import { ERROR_CODES, ERROR_MESSAGE } from "@/lib/constants/error";
 import {
   UpdateProvinceSchema,
   type UpdateProvinceSchemaType,
 } from "@/lib/validations/zod_province";
+import { ResultType } from "@/lib/types/Result";
+import { Prisma } from "@/lib/generated/prisma/client";
 
-async function validate(data: UpdateProvinceSchemaType) {
+async function validate(data: UpdateProvinceSchemaType): Promise<ResultType> {
   const session = await auth();
 
-  if (!session?.user) throw new Error(ERROR_CODES.UNAUTHENTICATED);
+  if (!session?.user)
+    return {
+      success: false,
+      message: ERROR_MESSAGE[ERROR_CODES.UNAUTHENTICATED],
+    };
 
   const validated = UpdateProvinceSchema.safeParse(data);
 
   if (!validated.success) {
-    throw new Error(ERROR_CODES.VALIDATION_ERROR);
+    return {
+      success: false,
+      message: ERROR_MESSAGE[ERROR_CODES.VALIDATION_ERROR],
+    };
   }
 
-  return validated.data;
+  return { success: true, message: null };
 }
 
-export async function updateProvince(data: UpdateProvinceSchemaType) {
-  const validated_data = await validate(data);
+export async function updateProvince(
+  data: UpdateProvinceSchemaType,
+): Promise<ResultType> {
+  const result = await validate(data);
+
+  if (!result.success) return result;
 
   try {
     //update provinces
     await prisma.province.update({
-      where: { id: validated_data.id },
+      where: { id: data.id },
       data: {
-        provinceName: validated_data.provinceName,
-        order: validated_data.order,
+        provinceName: data.provinceName,
+        order: data.order,
       },
     });
 
-    return true;
+    return { success: true, message: null };
   } catch (error) {
-    throw new Error(ERROR_CODES.DATABASE_ERROR);
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        return { success: false, message: "نام منطقه قبلاً ثبت شده است." };
+      }
+    }
+    return {
+      success: false,
+      message: ERROR_MESSAGE[ERROR_CODES.DATABASE_ERROR],
+    };
   }
 }

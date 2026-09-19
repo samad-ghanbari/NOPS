@@ -5,7 +5,7 @@ import stop from "@/assets/images/stop.png";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { errorMessages } from "@/lib/constants/error";
+import { ERROR_MESSAGE } from "@/lib/constants/error";
 
 export default function GlobalError({
   error,
@@ -20,7 +20,7 @@ export default function GlobalError({
     setLoaded(true);
   }, []);
 
-  const message = errorMessages[error.message] ?? error.message;
+  const message = ERROR_MESSAGE[error.message] ?? error.message;
 
   return (
     <div className="relative w-full h-dvh bg-pink-200 flex flex-col gap-4 items-center justify-center">
