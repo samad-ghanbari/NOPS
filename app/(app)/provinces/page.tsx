@@ -2,7 +2,7 @@
 
 import { Province } from "@/lib/generated/prisma/browser";
 
-import SearchBar from "@/components/province/SearchBar";
+import SearchBar from "@/components/SearchBar";
 import ProvinceWidget from "@/components/province/ProvinceWidget";
 import { Plus } from "lucide-react";
 import BreadCrumb from "@/components/BreadCrumb";
@@ -16,26 +16,38 @@ export default function Provinces() {
   const [records, setRecords] = useState<Province[]>([]);
 
   const [selectedProvince, selectProvince] = useState<Province | null>(null);
+  const [search, setSearch] = useState<string>("");
   const [modal, setModal] = useState<"create" | "update" | "delete" | null>(
     null,
   );
 
   useEffect(() => {
-    fetchRrecords();
+    setSearch("");
+    fetchRrecords(search);
   }, []);
 
-  async function fetchRrecords() {
-    setRecords(await fetchProvince());
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchRrecords(search);
+    }, 500);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [search]);
+
+  async function fetchRrecords(search: string) {
+    setRecords(await fetchProvince(search));
   }
 
   return (
     <>
       <BreadCrumb items={[{ name: "گروه‌بندی/منطقه" }]} />
-      <SearchBar />
+      <SearchBar value={search} onChange={setSearch} />
 
       <button
         title="ایجاد منطقه جدید"
-        className="cursor-pointer block mr-auto my-4"
+        className="cursor-pointer block mr-auto my-4 shadow-md shadow-gray-500"
         onClick={() => {
           setModal("create");
         }}
