@@ -65,17 +65,21 @@ export default function Provinces() {
         ))}
       </div>
 
-      <CreateProvince setModal={setModal} modal={modal} onAdd={fetchRrecords} />
+      <CreateProvince
+        setModal={setModal}
+        modal={modal}
+        onAdd={() => fetchRrecords(search)}
+      />
       <UpdateProvince
         setModal={setModal}
         modal={modal}
-        onUpdate={fetchRrecords}
+        onUpdate={() => fetchRrecords(search)}
         data={selectedProvince}
       />
       <DeleteProvince
         setModal={setModal}
         modal={modal}
-        onDelete={fetchRrecords}
+        onDelete={() => fetchRrecords(search)}
         data={selectedProvince}
       />
     </>
