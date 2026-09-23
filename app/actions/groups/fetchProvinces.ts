@@ -3,14 +3,17 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { ERROR_CODES, ERROR_MESSAGE } from "@/lib/constants/error";
+import { ResultType } from "@/lib/types/Result";
+import { Province } from "@/lib/generated/prisma/client";
 
-export async function fetchProvince() {
+export async function fetchProvinces(): Promise<ResultType<Province[]>> {
   const session = await auth();
 
   if (!session?.user)
     return {
       success: false,
       message: ERROR_MESSAGE[ERROR_CODES.UNAUTHENTICATED],
+      data: [],
     };
 
   try {
@@ -18,8 +21,12 @@ export async function fetchProvince() {
       orderBy: [{ order: "asc" }, { provinceName: "asc" }],
     });
 
-    return { success: true };
+    return { success: true, message: null, data: records };
   } catch (error) {
-    throw new Error(ERROR_CODES.DATABASE_ERROR);
+    return {
+      success: false,
+      message: ERROR_MESSAGE[ERROR_CODES.DATABASE_ERROR],
+      data: [],
+    };
   }
 }
