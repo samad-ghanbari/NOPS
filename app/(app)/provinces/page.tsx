@@ -47,12 +47,12 @@ export default function Provinces() {
 
       <button
         title="ایجاد منطقه جدید"
-        className="cursor-pointer block mr-auto my-4 shadow-md shadow-gray-500"
+        className="cursor-pointer block mr-auto my-4 rounded border border-sky-200"
         onClick={() => {
           setModal("create");
         }}
       >
-        <Plus className="w-8 h-8 rounded p-1 font-bold text-sky-800 bg-gray-200 hover:text-sky-100 hover:bg-sky-700 text-xl" />
+        <Plus className="w-8 h-8 rounded p-1 font-bold text-sky-800 bg-white hover:text-sky-100 hover:bg-sky-700 text-xl" />
       </button>
       <div className=" flex flex-row flex-wrap justify-center items-stretch gap-2 m-8">
         {records.map((rec) => (
