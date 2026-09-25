@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { Group, Province } from "@/lib/generated/prisma/browser";
 import { fetchProvinces } from "@/app/actions/groups/fetchProvinces";
 import { ResultType } from "@/lib/types/Result";
-import ProvinceComboBox from "@/components/group/ProvinceCBox";
 import BreadCrumb from "@/components/BreadCrumb";
 import Searchbar from "@/components/SearchBar";
 import { Loader2, Pencil, Plus, Trash } from "lucide-react";
@@ -70,15 +69,17 @@ export default function groups() {
 
       <Searchbar value={search} onChange={setSearch} className="my-2" />
 
-      <button
-        title="ایجاد گروه جدید"
-        className="cursor-pointer block mr-auto my-4 border-sky-200 border rounded"
-        onClick={() => {
-          setModal("create");
-        }}
-      >
-        <Plus className="w-8 h-8 rounded p-1 font-bold text-white bg-sky-700  hover:bg-sky-900 text-xl" />
-      </button>
+      {provinceId && (
+        <button
+          title="ایجاد گروه جدید"
+          className="cursor-pointer block mr-auto my-4 border-sky-200 border rounded"
+          onClick={() => {
+            setModal("create");
+          }}
+        >
+          <Plus className="w-8 h-8 rounded p-1 font-bold text-white bg-sky-700  hover:bg-sky-900 text-xl" />
+        </button>
+      )}
 
       {loading && (
         <Loader2 className="h-12 w-12 mx-auto animate-spin text-sky-600" />
@@ -108,7 +109,10 @@ export default function groups() {
               key={grp.id}
               className=" group w-fit border border-gray-300 rounded inline-block"
             >
-              <p className="p-2 text-gray-600 group-hover:text-sky-700 font-bold text-center bg-gray-200 border-b border-gray-300">
+              <p
+                className="p-2 text-gray-600 group-hover:text-sky-700 font-bold text-center bg-gray-200 border-b border-gray-300"
+                dir="rtl"
+              >
                 {grp.groupName}
               </p>
               <p className="p-4 text-gray-800 text-sm text-center border-b border-gray-300 last:border-b-0 bg-neutral-50 group-hover:bg-white">
@@ -155,6 +159,7 @@ export default function groups() {
 
       <UpdateGroupModal
         modal={modal}
+        province={selectedProvince}
         setModal={setModal}
         data={selectedGroup}
         onSuccess={() => {
