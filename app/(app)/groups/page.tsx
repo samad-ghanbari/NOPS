@@ -171,6 +171,7 @@ export default function groups() {
         modal={modal}
         setModal={setModal}
         data={selectedGroup}
+        province={selectedProvince}
         onSuccess={() => {
           loadGroups();
         }}
