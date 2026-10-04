@@ -52,7 +52,7 @@ export default function Provinces() {
           setModal("create");
         }}
       >
-        <Plus className="w-8 h-8 rounded p-1 font-bold text-sky-800 bg-white hover:text-sky-100 hover:bg-sky-700 text-xl" />
+        <Plus className="w-8 h-8 rounded p-1 font-bold text-white bg-sky-700  hover:bg-sky-900 text-xl" />
       </button>
       <div className=" flex flex-row flex-wrap justify-center items-stretch gap-2 m-8">
         {records.map((rec) => (

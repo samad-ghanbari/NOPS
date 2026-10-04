@@ -2,7 +2,7 @@
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { Group, Province } from "@/lib/generated/prisma/browser";
-import { fetchProvinces } from "@/app/actions/groups/fetchProvinces";
+import { fetchProvinces } from "@/app/actions/fetchProvinces";
 import { ResultType } from "@/lib/types/Result";
 import BreadCrumb from "@/components/BreadCrumb";
 import Searchbar from "@/components/SearchBar";
