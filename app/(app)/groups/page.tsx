@@ -42,9 +42,17 @@ export default function groups() {
     loadGroups();
   }, [provinceId]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      loadGroups();
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
   const loadGroups = async () => {
     setLoading(true);
-    const res: ResultType<Group[]> = await fetchGroups(provinceId);
+    const res: ResultType<Group[]> = await fetchGroups(provinceId, search);
     if (res.data) setGroups(res.data);
     setLoading(false);
   };

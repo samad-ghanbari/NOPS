@@ -19,6 +19,7 @@ export async function fetchProvince(filter?: string) {
         ? {
             provinceName: {
               contains: filter.trim(),
+              mode: "insensitive",
             },
           }
         : undefined,

@@ -7,6 +7,7 @@ import { ResultType } from "@/lib/types/Result";
 
 export async function fetchGroups(
   provinceId: string | null,
+  filter?: string,
 ): Promise<ResultType<Group[]>> {
   if (provinceId === null) return { success: true, message: null, data: [] };
 
@@ -20,7 +21,16 @@ export async function fetchGroups(
 
   try {
     const records: Group[] = await prisma.group.findMany({
-      where: { provinceId: provinceId },
+      where: {
+        provinceId: provinceId,
+        groupName: filter?.trim()
+          ? {
+              contains: filter.trim(),
+              mode: "insensitive",
+            }
+          : undefined,
+      },
+
       orderBy: [{ order: "asc" }, { groupName: "asc" }],
     });
 

@@ -31,6 +31,8 @@ export default function Provinces() {
       fetchRrecords(search);
     }, 500);
 
+    //cleanup function. it runs when new effect is going to execute
+    // When a useEffect needs to run again because its dependencies changed, React first runs the previous effect's cleanup function
     return () => {
       clearTimeout(timer);
     };
