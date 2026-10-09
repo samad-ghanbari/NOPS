@@ -9,6 +9,8 @@ import BreadCrumb from "@/components/BreadCrumb";
 import Combobox from "@/components/ComboBox";
 import { cn } from "@/lib/utils";
 import { fetchRoles } from "@/app/actions/DeviceRoles/fetchRoles";
+import { CreateRole } from "@/app/actions/Roles/create";
+import CreateDeviceRole from "@/components/deviceRoles/Modals/Create";
 
 export default function deviceRoles() {
   const [provinces, setProvinces] = useState<Province[]>([]);
@@ -119,6 +121,15 @@ export default function deviceRoles() {
           );
         })}
       </div>
+
+      {provinceId && (
+        <CreateDeviceRole
+          provinceId={provinceId}
+          modal={modal}
+          setModal={setModal}
+          onSuccess={loadRoles}
+        />
+      )}
     </>
   );
 }
