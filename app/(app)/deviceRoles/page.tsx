@@ -9,7 +9,6 @@ import BreadCrumb from "@/components/BreadCrumb";
 import Combobox from "@/components/ComboBox";
 import { cn } from "@/lib/utils";
 import { fetchRoles } from "@/app/actions/DeviceRoles/fetchRoles";
-import { CreateRole } from "@/app/actions/Roles/create";
 import CreateDeviceRole from "@/components/deviceRoles/Modals/Create";
 
 export default function deviceRoles() {
@@ -130,6 +129,8 @@ export default function deviceRoles() {
           onSuccess={loadRoles}
         />
       )}
+
+      {selectedProvince && <UpdateDeviceRole />}
     </>
   );
 }
