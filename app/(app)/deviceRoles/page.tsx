@@ -1,6 +1,6 @@
 "use client";
 
-import { DeviceRole, Province, Role } from "@/lib/generated/prisma/browser";
+import { DeviceRole, Province } from "@/lib/generated/prisma/browser";
 import { useEffect, useState } from "react";
 import { Loader2, Pencil, Plus, Trash } from "lucide-react";
 import { ResultType } from "@/lib/types/Result";
@@ -8,21 +8,28 @@ import { fetchProvinces } from "@/app/actions/fetchProvinces";
 import BreadCrumb from "@/components/BreadCrumb";
 import Combobox from "@/components/ComboBox";
 import { cn } from "@/lib/utils";
-import { fetchRoles } from "@/app/actions/DeviceRoles/fetchRoles";
+import { fetchRoles } from "@/app/actions/fetchRoles";
 import CreateDeviceRole from "@/components/deviceRoles/Modals/Create";
+import UpdateDeviceRole from "@/components/deviceRoles/Modals/Update";
+import { UpdateRoleSchemaType } from "@/lib/validations/zod_role";
+import DeleteDeviceRole from "@/components/deviceRoles/Modals/Delete";
 
 export default function deviceRoles() {
   const [provinces, setProvinces] = useState<Province[]>([]);
-  const [provinceId, setProvinceId] = useState<string | null>(null);
-  const selectedProvince: Province | undefined = provinces.find(
-    (province) => province.id === provinceId,
-  );
+  const [province, setProvince] = useState<Province | null>(null);
+
   const [loading, setLoading] = useState<boolean>(false);
   const [roles, setRoles] = useState<DeviceRole[]>([]);
 
-  const [modal, setModal] = useState<"create" | "update" | "delete" | null>(
-    null,
-  );
+  type ModalState =
+    | { type: null }
+    | { type: "create"; province: Province }
+    | {
+        type: "update" | "delete";
+        province: Province;
+        role: UpdateRoleSchemaType;
+      };
+  const [modal, setModal] = useState<ModalState>({ type: null });
 
   useEffect(() => {
     const loadProvinces = async () => {
@@ -34,11 +41,18 @@ export default function deviceRoles() {
 
   useEffect(() => {
     loadRoles();
-  }, [provinceId]);
+  }, [province]);
 
   async function loadRoles() {
-    const result: ResultType<DeviceRole[]> = await fetchRoles(provinceId);
-    if (result.success) if (result.data) setRoles(result.data);
+    if (province) {
+      setLoading(true);
+      const result: ResultType<DeviceRole[]> = await fetchRoles(province.id);
+      if (result.success)
+        if (result.data) {
+          setLoading(false);
+          setRoles(result.data);
+        }
+    }
   }
 
   return (
@@ -46,21 +60,20 @@ export default function deviceRoles() {
       <BreadCrumb items={[{ name: "تجهیزات / نقش تجهیزات" }]} />
       <Combobox
         items={provinces}
-        value={provinceId}
-        onChange={setProvinceId}
-        getLabel={(province) => province.provinceName}
-        getValue={(province) => province.id}
+        selected={province}
+        onSelect={setProvince}
+        getValue={(province) => province.provinceName}
         className="w-full max-w-md mx-auto"
         placeholder="جستجوی منطقه"
         searchable={true}
       />
 
-      {provinceId && (
+      {province && (
         <button
           title="افزودن نقش جدید"
           className="cursor-pointer block mr-auto my-4 border-sky-200 border rounded"
           onClick={() => {
-            setModal("create");
+            setModal({ type: "create", province: province });
           }}
         >
           <Plus className="w-8 h-8 rounded p-1 font-bold text-white bg-sky-700  hover:bg-sky-900 text-xl" />
@@ -75,14 +88,14 @@ export default function deviceRoles() {
         dir="ltr"
         className={cn(
           "flex flex-row flex-wrap items-stretch justify-center gap-2 mt-8",
-          !selectedProvince && "hidden",
+          !province && "hidden",
         )}
       >
         <p className="text-gray-500 text-right py-2 ml-auto">
           نقش تجهیزات منطقه{" "}
-          {selectedProvince && (
+          {province && (
             <span className="font-bold text-sky-700">
-              {selectedProvince.provinceName}
+              {province.provinceName}
             </span>
           )}
         </p>
@@ -104,14 +117,31 @@ export default function deviceRoles() {
                 <button
                   title="ویرایش نقش"
                   className="cursor-pointer  hover:bg-green-700 hover:text-white text-green-700 p-1 rounded"
-                  onClick={() => {}}
+                  onClick={() => {
+                    if (province) {
+                      setModal({
+                        type: "update",
+                        province: province,
+                        role: item,
+                      });
+                    }
+                  }}
                 >
                   <Pencil className="w-5 h-5" />
                 </button>
+
                 <button
                   title="حذف نقش"
                   className="cursor-pointer hover:bg-red-500 hover:text-white text-red-500 p-1 rounded"
-                  onClick={() => {}}
+                  onClick={() => {
+                    if (province) {
+                      setModal({
+                        type: "delete",
+                        province: province,
+                        role: item,
+                      });
+                    }
+                  }}
                 >
                   <Trash className="w-5 h-5" />
                 </button>
@@ -121,16 +151,29 @@ export default function deviceRoles() {
         })}
       </div>
 
-      {provinceId && (
+      {modal.type === "create" && (
         <CreateDeviceRole
-          provinceId={provinceId}
           modal={modal}
           setModal={setModal}
           onSuccess={loadRoles}
         />
       )}
 
-      {selectedProvince && <UpdateDeviceRole />}
+      {modal.type === "update" && (
+        <UpdateDeviceRole
+          modal={modal}
+          setModal={setModal}
+          onSuccess={loadRoles}
+        />
+      )}
+
+      {modal.type === "delete" && (
+        <DeleteDeviceRole
+          modal={modal}
+          setModal={setModal}
+          onSuccess={loadRoles}
+        />
+      )}
     </>
   );
 }

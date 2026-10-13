@@ -15,7 +15,7 @@ import Combobox from "@/components/ComboBox";
 
 export default function groups() {
   const [provinces, setProvinces] = useState<Province[]>([]);
-  const [provinceId, setProvinceId] = useState<string | null>(null);
+  const [province, setProvince] = useState<Province | null>(null);
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -34,13 +34,13 @@ export default function groups() {
   }, []);
 
   useEffect(() => {
-    if (!provinceId) {
+    if (!province) {
       setGroups([]);
       return;
     }
 
     loadGroups();
-  }, [provinceId]);
+  }, [province]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -51,25 +51,22 @@ export default function groups() {
   }, [search]);
 
   const loadGroups = async () => {
-    setLoading(true);
-    const res: ResultType<Group[]> = await fetchGroups(provinceId, search);
-    if (res.data) setGroups(res.data);
-    setLoading(false);
+    if (province) {
+      setLoading(true);
+      const res: ResultType<Group[]> = await fetchGroups(province.id, search);
+      if (res.data) setGroups(res.data);
+      setLoading(false);
+    }
   };
-
-  const selectedProvince: Province | undefined = provinces.find(
-    (province) => province.id === provinceId,
-  );
 
   return (
     <>
       <BreadCrumb items={[{ name: "گروه‌بندی/گروه" }]} />
       <Combobox
         items={provinces}
-        value={provinceId}
-        onChange={setProvinceId}
-        getLabel={(province) => province.provinceName}
-        getValue={(province) => province.id}
+        selected={province}
+        onSelect={setProvince}
+        getValue={(item) => item.provinceName}
         className="w-full max-w-md mx-auto"
         placeholder="جستجوی منطقه"
         searchable={true}
@@ -77,7 +74,7 @@ export default function groups() {
 
       <Searchbar value={search} onChange={setSearch} className="my-2" />
 
-      {provinceId && (
+      {province && (
         <button
           title="ایجاد گروه جدید"
           className="cursor-pointer block mr-auto my-4 border-sky-200 border rounded"
@@ -97,14 +94,14 @@ export default function groups() {
         dir="ltr"
         className={cn(
           "flex flex-row flex-wrap items-stretch justify-center gap-2 mt-8",
-          !selectedProvince && "hidden",
+          !province && "hidden",
         )}
       >
         <p className="text-gray-500 text-right py-2 ml-auto">
           گروه‌های منطقه{" "}
-          {selectedProvince && (
+          {province && (
             <span className="font-bold text-sky-700">
-              {selectedProvince.provinceName}
+              {province.provinceName}
             </span>
           )}
         </p>
@@ -156,34 +153,40 @@ export default function groups() {
         })}
       </div>
 
-      <CreateGroupModal
-        modal={modal}
-        province={selectedProvince}
-        setModal={setModal}
-        onSuccess={() => {
-          loadGroups();
-        }}
-      />
+      {province && (
+        <CreateGroupModal
+          modal={modal}
+          province={province}
+          setModal={setModal}
+          onSuccess={() => {
+            loadGroups();
+          }}
+        />
+      )}
 
-      <UpdateGroupModal
-        modal={modal}
-        province={selectedProvince}
-        setModal={setModal}
-        data={selectedGroup}
-        onSuccess={() => {
-          loadGroups();
-        }}
-      />
+      {province && (
+        <UpdateGroupModal
+          modal={modal}
+          province={province}
+          setModal={setModal}
+          data={selectedGroup}
+          onSuccess={() => {
+            loadGroups();
+          }}
+        />
+      )}
 
-      <DeleteGroupModal
-        modal={modal}
-        setModal={setModal}
-        data={selectedGroup}
-        province={selectedProvince}
-        onSuccess={() => {
-          loadGroups();
-        }}
-      />
+      {province && (
+        <DeleteGroupModal
+          modal={modal}
+          setModal={setModal}
+          data={selectedGroup}
+          province={province}
+          onSuccess={() => {
+            loadGroups();
+          }}
+        />
+      )}
     </>
   );
 }

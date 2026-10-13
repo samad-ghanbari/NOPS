@@ -1,3 +1,5 @@
+"use server";
+
 import { auth } from "@/auth";
 import { ERROR_CODES, ERROR_MESSAGE } from "@/lib/constants/error";
 import { Prisma } from "@/lib/generated/prisma/client";
@@ -7,11 +9,10 @@ import {
   UpdateRoleSchemaType,
   UpdateRoleSchema,
 } from "@/lib/validations/zod_role";
-import { success } from "zod";
 
 async function validate(data: UpdateRoleSchemaType): Promise<ResultType> {
   const session = await auth();
-  if (session?.user) {
+  if (!session?.user) {
     return {
       success: false,
       message: ERROR_MESSAGE[ERROR_CODES.UNAUTHENTICATED],
@@ -45,5 +46,10 @@ export async function UpdateRole(data: UpdateRoleSchemaType) {
       if (error.code === "P2002")
         return { success: false, message: "نقش مورد نظر تکراری می‌باشد." };
     }
+
+    return {
+      success: false,
+      message: ERROR_MESSAGE[ERROR_CODES.DATABASE_ERROR],
+    };
   }
 }

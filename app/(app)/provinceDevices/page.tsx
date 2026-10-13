@@ -6,7 +6,7 @@ import { Loader2, Pencil, Plus, Trash } from "lucide-react";
 import { ResultType } from "@/lib/types/Result";
 import { fetchProvinces } from "@/app/actions/fetchProvinces";
 import BreadCrumb from "@/components/BreadCrumb";
-import Combobox from "@/components/ComboBox";
+import Combobox from "@/components/ComboBox00";
 import Searchbar from "@/components/SearchBar";
 import { cn } from "@/lib/utils";
 
