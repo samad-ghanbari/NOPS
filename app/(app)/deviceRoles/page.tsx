@@ -66,6 +66,7 @@ export default function deviceRoles() {
         className="w-full max-w-md mx-auto"
         placeholder="جستجوی منطقه"
         searchable={true}
+        label="انتخاب منطقه"
       />
 
       {province && (
@@ -105,15 +106,16 @@ export default function deviceRoles() {
           return (
             <div
               key={item.id}
-              className=" group w-fit min-w-32 border border-gray-300 rounded inline-block"
+              className=" group w-fit min-w-48 border border-gray-200 rounded inline-block bg-white"
             >
+              <p className="text-gray-400 px-2 text-right text-sm">نقش تجهیز</p>
               <p
-                className="p-2 text-gray-600 group-hover:text-sky-700 font-bold text-center bg-neutral-50 border-b border-gray-300"
+                className="p-2 text-gray-600 group-hover:text-sky-700 font-bold text-center "
                 dir="rtl"
               >
                 {item.role}
               </p>
-              <div className="relative p-1 bottom-0 h-8 bg-gray-200 flex flex-row items-center justify-start gap-1 border-t border-gray-300">
+              <div className="relative p-1 bottom-0 h-8 bg-neutral-50 flex flex-row items-center justify-start gap-1 ">
                 <button
                   title="ویرایش نقش"
                   className="cursor-pointer  hover:bg-green-700 hover:text-white text-green-700 p-1 rounded"

@@ -45,7 +45,7 @@ export default function Provinces() {
   return (
     <>
       <BreadCrumb items={[{ name: "گروه‌بندی/منطقه" }]} />
-      <SearchBar value={search} onChange={setSearch} />
+      <SearchBar value={search} onChange={setSearch} label="جستجوی منطقه" />
 
       <button
         title="ایجاد منطقه جدید"

@@ -68,6 +68,7 @@ export default function groups() {
         onSelect={setProvince}
         getValue={(item) => item.provinceName}
         className="w-full max-w-md mx-auto"
+        label="انتخاب منطقه"
         placeholder="جستجوی منطقه"
         searchable={true}
       />
@@ -112,21 +113,17 @@ export default function groups() {
           return (
             <div
               key={grp.id}
-              className=" group w-fit border border-gray-300 rounded inline-block"
+              className=" group w-fit min-w-48 border border-gray-200 rounded inline-block bg-white"
             >
+              <p className="text-gray-400 px-2 text-right text-sm">گروه</p>
               <p
-                className="p-2 text-gray-600 group-hover:text-sky-700 font-bold text-center bg-gray-200 border-b border-gray-300"
+                className="py-2 px-4 text-gray-600 group-hover:text-sky-700  text-center"
                 dir="rtl"
               >
                 {grp.groupName}
               </p>
-              <p className="p-4 text-gray-800 text-sm text-center border-b border-gray-300 last:border-b-0 bg-neutral-50 group-hover:bg-white">
-                Vendor: {grp.vendor}
-              </p>
-              <p className="p-4 text-gray-800 text-sm text-center bg-neutral-50 group-hover:bg-white">
-                type: {grp.deviceType}
-              </p>
-              <div className="relative p-1 bottom-0 h-8 bg-gray-200 flex flex-row items-center justify-start gap-1 border-t border-gray-300">
+
+              <div className="relative p-1 bottom-0 h-8 bg-neutral-50 flex flex-row items-center justify-start gap-1">
                 <button
                   title="ویرایش گروه"
                   className="cursor-pointer  hover:bg-green-700 hover:text-white text-green-700 p-1 rounded"
@@ -135,7 +132,7 @@ export default function groups() {
                     setModal("update");
                   }}
                 >
-                  <Pencil className="w-5 h-5" />
+                  <Pencil className="w-4 h-4" />
                 </button>
                 <button
                   title="حذف گروه"
@@ -145,7 +142,7 @@ export default function groups() {
                     setModal("delete");
                   }}
                 >
-                  <Trash className="w-5 h-5" />
+                  <Trash className="w-4 h-4" />
                 </button>
               </div>
             </div>

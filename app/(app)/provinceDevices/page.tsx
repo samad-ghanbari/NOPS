@@ -6,18 +6,14 @@ import { Loader2, Pencil, Plus, Trash } from "lucide-react";
 import { ResultType } from "@/lib/types/Result";
 import { fetchProvinces } from "@/app/actions/fetchProvinces";
 import BreadCrumb from "@/components/BreadCrumb";
-import Combobox from "@/components/ComboBox00";
+import Combobox from "@/components/ComboBox";
 import Searchbar from "@/components/SearchBar";
 import { cn } from "@/lib/utils";
 
 export default function provinceDevices() {
   const [provinces, setProvinces] = useState<Province[]>([]);
-  const [provinceId, setProvinceId] = useState<string | null>(null);
-  const selectedProvince: Province | undefined = provinces.find(
-    (province) => province.id === provinceId,
-  );
+  const [province, setProvince] = useState<Province | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-
   const [search, setSearch] = useState<string>("");
   const [modal, setModal] = useState<"create" | "update" | "delete" | null>(
     null,
@@ -36,11 +32,11 @@ export default function provinceDevices() {
       <BreadCrumb items={[{ name: " تجهیزات / تجهیزات منطقه" }]} />
       <Combobox
         items={provinces}
-        value={provinceId}
-        onChange={setProvinceId}
-        getLabel={(province) => province.provinceName}
-        getValue={(province) => province.id}
+        selected={province}
+        onSelect={setProvince}
+        getValue={(prv) => prv.provinceName}
         className="w-full max-w-md mx-auto"
+        label="انتخاب منطقه"
         placeholder="جستجوی منطقه"
         searchable={true}
       />
@@ -52,7 +48,7 @@ export default function provinceDevices() {
         className="my-2"
       />
 
-      {provinceId && (
+      {province && (
         <button
           title="افزودن تجهیز جدید"
           className="cursor-pointer block mr-auto my-4 border-sky-200 border rounded"
@@ -72,14 +68,14 @@ export default function provinceDevices() {
         dir="ltr"
         className={cn(
           "flex flex-row flex-wrap items-stretch justify-center gap-2 mt-8",
-          !selectedProvince && "hidden",
+          !province && "hidden",
         )}
       >
         <p className="text-gray-500 text-right py-2 ml-auto">
           تجهیزات منطقه{" "}
-          {selectedProvince && (
+          {province && (
             <span className="font-bold text-sky-700">
-              {selectedProvince.provinceName}
+              {province.provinceName}
             </span>
           )}
         </p>
