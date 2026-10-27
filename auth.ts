@@ -6,6 +6,7 @@ import { verifyCaptcha } from "./lib/captcha";
 
 import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "@/lib/password";
+import { includes } from "zod";
 
 class CaptchaInvalidError extends CredentialsSignin {
   code = "CAPTCHA_INVALID";
@@ -23,7 +24,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     maxAge: 60 * 60 * 24 * 7, // 7 days
   },
 
-  // Credentials is a function that reeceives configs object and returns provider object
+  // Credentials is a function that receives configs object and returns provider object
   // Credentials({...})
   /*
   {
@@ -80,7 +81,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const user = await prisma.user.findUnique({
           where: {
-            natid, // shortend for natid: natid
+            natid: natid,
+            enabled: true,
+          },
+          include: {
+            provinceUsers: {
+              include: { province: true },
+            },
+            userRole: {
+              include: {
+                role: {
+                  include: {
+                    rolePermission: { include: { permission: true } },
+                  },
+                },
+              },
+            },
           },
         });
 
@@ -94,12 +110,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           throw new CredInvalidError();
         }
 
+        const provinces = user?.provinceUsers.map((item) => {
+          return { id: item.province.id, name: item.province.provinceName };
+        });
+        const roles = user?.userRole.flatMap((ur) => {
+          return { name: ur.role.name, description: ur.role.description };
+        });
+        const permissions = user?.userRole.flatMap((ur) =>
+          ur.role.rolePermission.map((i) => i.permission.code),
+        );
+
         // as User in types/next-auth.d.ts
         return {
           // returns user for token payload
           id: user.id,
           natid: user.natid,
           name: `${user.name} ${user.lastname}`,
+          provinces,
+          roles,
+          permissions,
         };
       },
     }),
@@ -111,6 +140,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.id = user.id;
         token.natid = user.natid;
         token.name = user.name;
+        token.provinces = user.provinces;
+        token.roles = user.roles;
+        token.permissions = user.permissions;
       }
 
       return token;
@@ -120,6 +152,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       session.user.id = token.id as string;
       session.user.natid = token.natid as string;
       session.user.name = token.name as string;
+      session.user.provinces = token.provinces as {
+        id: string;
+        name: string;
+      }[];
+      session.user.roles = token.roles as {
+        name: string;
+        description: string;
+      }[];
+      session.user.permissions = token.permissions as string[];
 
       return session;
     },
