@@ -6,7 +6,6 @@ import { verifyCaptcha } from "./lib/captcha";
 
 import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "@/lib/password";
-import { includes } from "zod";
 
 class CaptchaInvalidError extends CredentialsSignin {
   code = "CAPTCHA_INVALID";
@@ -85,7 +84,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             enabled: true,
           },
           include: {
-            provinceUsers: {
+            userProvinces: {
               include: { province: true },
             },
             userRole: {
@@ -110,12 +109,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           throw new CredInvalidError();
         }
 
-        const provinces = user?.provinceUsers.map((item) => {
-          return { id: item.province.id, name: item.province.provinceName };
-        });
-        const roles = user?.userRole.flatMap((ur) => {
-          return { name: ur.role.name, description: ur.role.description };
-        });
+        const provinces = user?.userProvinces.map((item) => item.province.id);
+
+        // const roles = user?.userRole.flatMap((ur) => {
+        //   return { name: ur.role.name, description: ur.role.description };
+        // });
         const permissions = user?.userRole.flatMap((ur) =>
           ur.role.rolePermission.map((i) => i.permission.code),
         );
@@ -126,9 +124,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           id: user.id,
           natid: user.natid,
           name: `${user.name} ${user.lastname}`,
-          provinces,
-          roles,
+          scope: { provinces: provinces },
           permissions,
+          tokenVersion: user.tokenVersion,
         };
       },
     }),
