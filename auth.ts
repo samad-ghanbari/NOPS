@@ -17,10 +17,17 @@ class DatabaseError extends CredentialsSignin {
   code = "DB_INVALID";
 }
 
+const maxAge = {
+  week: 60 * 60 * 24 * 7,
+  day: 60 * 60 * 24,
+  hour: 60 * 60,
+  tenHour: 60 * 60 * 10,
+};
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: {
     strategy: "jwt",
-    maxAge: 60 * 60 * 24 * 7, // 7 days
+    maxAge: maxAge.week,
   },
 
   // Credentials is a function that receives configs object and returns provider object
@@ -60,6 +67,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
 
       async authorize(credentials) {
+        // this is called on log in
+        // returns user object
+
         const natid = credentials.natid as string;
         const password = credentials.password as string;
         const captcha = credentials.captcha as string;
@@ -119,6 +129,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         );
 
         // as User in types/next-auth.d.ts
+        // return user object
         return {
           // returns user for token payload
           id: user.id,
@@ -132,34 +143,43 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
 
+  // after successful login-in auth.js calls jwt and saves it in cookie
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.natid = user.natid;
         token.name = user.name;
-        token.provinces = user.provinces;
-        token.roles = user.roles;
+        token.scope = user.scope;
         token.permissions = user.permissions;
+        token.tokenVersion = user.tokenVersion;
+      }
+      // Check token version against database
+      if (typeof token.id === "string") {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id },
+          select: { tokenVersion: true },
+        });
+
+        if (!dbUser || dbUser?.tokenVersion !== token.tokenVersion) {
+          return null;
+        }
       }
 
       return token;
     },
 
     async session({ session, token }) {
-      session.user.id = token.id as string;
-      session.user.natid = token.natid as string;
-      session.user.name = token.name as string;
-      session.user.provinces = token.provinces as {
-        id: string;
-        name: string;
-      }[];
-      session.user.roles = token.roles as {
-        name: string;
-        description: string;
-      }[];
-      session.user.permissions = token.permissions as string[];
-
+      if (token) {
+        session.user.id = token.id as string;
+        session.user.natid = token.natid as string;
+        session.user.name = token.name as string;
+        session.user.scope = token.scope as {
+          provinces: string[];
+        };
+        session.user.permissions = token.permissions as string[];
+        session.user.tokenVersion = token.tokenVersion as number;
+      }
       return session;
     },
   },
