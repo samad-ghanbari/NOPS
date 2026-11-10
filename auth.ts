@@ -148,7 +148,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.natid = user.natid;
         token.name = user.name;
         token.scope = user.scope;
         token.permissions = user.permissions;
@@ -172,7 +171,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session, token }) {
       if (token) {
         session.user.id = token.id as string;
-        session.user.natid = token.natid as string;
         session.user.name = token.name as string;
         session.user.scope = token.scope as {
           provinces: string[];
