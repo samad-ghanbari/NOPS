@@ -135,6 +135,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           id: user.id,
           natid: user.natid,
           name: `${user.name} ${user.lastname}`,
+          gender: `${user.gender}`,
           scope: { provinces: provinces },
           permissions,
           tokenVersion: user.tokenVersion,
@@ -149,6 +150,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (user) {
         token.id = user.id;
         token.name = user.name;
+        token.gender = user.gender;
         token.scope = user.scope;
         token.permissions = user.permissions;
         token.tokenVersion = user.tokenVersion;
@@ -172,6 +174,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (token) {
         session.user.id = token.id as string;
         session.user.name = token.name as string;
+        session.user.gender = token.gender as string;
         session.user.scope = token.scope as {
           provinces: string[];
         };
